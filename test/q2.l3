@@ -1,0 +1,31 @@
+(define last-element
+   (lambda (lst)
+      @TODO
+  )
+)
+
+(define power
+    (lambda (n1 n2)
+       @TODO
+    )
+)
+
+(define sum-lst-power
+    (lambda (lst n)
+       @TODO
+    )
+)
+      
+  
+(define num-from-digits
+  (lambda (lst)
+     @TODO
+  )
+)
+
+(define is-narcissistic
+  (lambda (lst)
+       @TODO
+    )
+)
+ 
