@@ -1,34 +1,54 @@
 (define last-element
    (lambda (lst)
-      @TODO
+      (if (isEmpty(rest(lst)) ))
+         (return lst)
+  ( return last-element(rest(lst)))
   )
 )
 
 (define power
     (lambda (n1 n2)
-       @TODO
-       if(= n2 1)
-         return n1
-      return (* n1 power(n1,(- n2 1)))
+       (if(= n2 1))
+         (return n1)
+      (return (* n1 power(n1,(- n2 1))))
     )
 )
 
 (define sum-lst-power
     (lambda (lst n)
-       @TODO
+      (if (isEmpty(lst) ) )
+         (return 0)
+      (return (+ power(first(lst),n) sum-lst-power(rest(lst),n)))
+    
     )
 )
-      
-  
-(define num-from-digits
+   
+ 
+(define num-from-digits    ; 248 = 2*10^2 + 4*10^1 + 8*10^0
   (lambda (lst)
-     @TODO
+   (if (isEmpty(lst) ) )
+         (return 0)
+   (return (+ power(first(lst) (- length(lst) 1) num-from-digits(rest(lst))))
+    
   )
 )
 
-(define is-narcissistic
+(define is-narcissistic ; 153 = 1^3 + 5^3 + 3^3
   (lambda (lst)
-       @TODO
+       define ( x num-from-digits(lst))
+       (if ( = sum-lst-power(lst,length(lst))  x))
+         (return #t)
+         (return #f)
     )
 )
  
+
+ ;Our Functions
+
+(define length
+  (lambda (lst)
+   (if isEmpty(lst))
+      (return 0)
+  (return (+ 1 length(rest(lst)))  )
+  )
+)
