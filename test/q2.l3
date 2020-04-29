@@ -1,45 +1,67 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname q2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (define last-element
    (lambda (lst)
-      (if (isEmpty(rest(lst)) ))
-         (return lst)
-  ( return last-element(rest(lst)))
+      (if (eq? lst '()) lst
+       (last-element cdr lst)
+      )
+   )
+)
+
+; car - first
+; cdr - rest
+; eq? lst '() - empty
+
+
+
+;for is like let. let was in lecture(2nd parser lecture, rewriteLet) and is in the code
+
+;(define (factorial n)
+ ; (if (zero? n) 1
+  ;  (* n (factorial (- n 1)))))
+
+;(fibonacci 2)
+
+
+
+(define power
+  (lambda (n1 n2)
+    (if (= n2 1)
+          n2
+       (* n1 (power n1 (- n2 1)))
+    )
   )
 )
 
-(define power
-    (lambda (n1 n2)
-       (if(= n2 1))
-         (return n1)
-      (return (* n1 power(n1,(- n2 1))))
-    )
-)
-
-(define sum-lst-power
+(define sum-lst-power         ; (1 2 3) 2 -> 1^2 + 2^2 + 3^2
     (lambda (lst n)
-      (if (isEmpty(lst) ) )
-         (return 0)
-      (return (+ power(first(lst),n) sum-lst-power(rest(lst),n)))
-    
+      (if (eq? lst '() )  
+         0
+        (+ (power car lst n) (sum-lst-power cdr lst n)
+      )
     )
 )
    
  
 (define num-from-digits    ; 248 = 2*10^2 + 4*10^1 + 8*10^0
   (lambda (lst)
-   (if (isEmpty(lst) ) )
-         (return 0)
-   (return (+ power(first(lst) (- length(lst) 1) num-from-digits(rest(lst))))
-    
+    (if (eq? lst '() ) 
+      0
+      (+ (* car lst (power 10 (- (length lst) 1) ) ) (num-from-digits cdr lst) )
+    )
   )
 )
+  
 
 (define is-narcissistic ; 153 = 1^3 + 5^3 + 3^3
   (lambda (lst)
-       define ( x num-from-digits(lst))
-       (if ( = sum-lst-power(lst,length(lst))  x))
-         (return #t)
-         (return #f)
+    (define ( x (num-from-digits lst)))
+    (if ( = (sum-lst-power lst (length lst) )  x)
+        #t
+        #f
     )
+  )
 )
  
 
@@ -47,8 +69,9 @@
 
 (define length
   (lambda (lst)
-   (if isEmpty(lst))
-      (return 0)
-  (return (+ 1 length(rest(lst)))  )
+    (if eq? lst '() 
+      0
+      (+ 1 (length cdr lst) ) 
+    )
   )
 )
