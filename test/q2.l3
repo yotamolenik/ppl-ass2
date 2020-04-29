@@ -1,10 +1,9 @@
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname q2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+
 (define last-element
    (lambda (lst)
-      (if (eq? lst '()) lst
-       (last-element cdr lst)
+      (if (eq? lst '()) 
+        lst
+        (last-element (cdr lst))
       )
    )
 )
@@ -38,7 +37,7 @@
     (lambda (lst n)
       (if (eq? lst '() )  
          0
-        (+ (power car lst n) (sum-lst-power cdr lst n)
+        (+ (power (car lst) n) (sum-lst-power (cdr lst) n)
       )
     )
 )
@@ -48,7 +47,7 @@
   (lambda (lst)
     (if (eq? lst '() ) 
       0
-      (+ (* car lst (power 10 (- (length lst) 1) ) ) (num-from-digits cdr lst) )
+      (+ (* (car lst) (power 10 (- (length lst) 1) ) ) (num-from-digits (cdr lst)) )
     )
   )
 )
@@ -71,7 +70,7 @@
   (lambda (lst)
     (if eq? lst '() 
       0
-      (+ 1 (length cdr lst) ) 
+      (+ 1 (length (cdr lst)) ) 
     )
   )
 )
