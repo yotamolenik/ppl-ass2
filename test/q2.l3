@@ -46,6 +46,9 @@
 
 (define is-narcissistic
   (lambda (lst)
-    (eq? (num-from-digits lst) (sum-lst-power lst (length lst)))
+    (if (= (num-from-digits lst) (sum-lst-power lst (length lst)))
+      #t
+      #f
+    )
   )
 )
