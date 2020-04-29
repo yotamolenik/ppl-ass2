@@ -1,7 +1,7 @@
 (define last-element
    (lambda (lst)
-      (if (eq? lst '()) 
-        lst
+      (if (eq? (cdr lst) '()) 
+        (car lst)
         (last-element (cdr lst))
       )
    )
@@ -9,8 +9,8 @@
 
 (define power
   (lambda (n1 n2)
-    (if (= n2 1)
-          n2
+    (if (= n2 0)
+          1
        (* n1 (power n1 (- n2 1)))
     )
   )
@@ -18,27 +18,28 @@
 
 (define sum-lst-power 
   (lambda (lst n)
-      (if (eq? lst '() )  
+      (if (eq? lst '())  
          0
         (+ (power (car lst) n) (sum-lst-power (cdr lst) n)
       )
   )
+)
 )
    
 (define length
   (lambda (lst)
     (if (eq? lst '()) 
       0
-      (+ 1 (length (cdr lst)) ) 
+      (+ 1 (length (cdr lst))) 
     )
   )
 )
 
 (define num-from-digits
   (lambda (lst)
-    (if (eq? lst '() ) 
+    (if (eq? lst '()) 
       0
-      (+ (* (car lst) (power 10 (- (length lst) 1) ) ) (num-from-digits (cdr lst)) )
+      (+ (* (car lst) (power 10 (- (length lst) 1))) (num-from-digits (cdr lst)))
     )
   )
 )
