@@ -213,8 +213,7 @@ const parseProcExp = (vars: Sexp, body: Sexp[]): Result<ProcExp> =>
 //                             makeOk(makeForExp(makeVarDecl(first), cexps[0], cexps[1], cexps[2]))); 
 
 const parseForExp = (decl: Sexp, body:Sexp[]): Result<ForExp> =>
-    body.length !== 3 ? makeFailure("Expression not of the form (for <VarDecl> <NumExp> <NumExp> <cexp>)") :
+    body.length !== 3 || !isIdentifier (decl) ? makeFailure("Expression not of the form (for <VarDecl> <NumExp> <NumExp> <cexp>)") :
     bind(mapResult(parseL21CExp, body), 
-        (cexps: CExp[]) =>  makeOk(makeForExp(makeVarDecl,decl), cexps[0],cexps[1],cexps[2] )));
-
-        //num1: NumExp, num2: NumExp, cexp: CExp 
+        (cexps: CExp[]) => !isNumExp(cexps[0]) || !isNumExp(cexps[1]) ? makeFailure("Args 1 and 2 shoud be numbers") :
+        makeOk(makeForExp(makeVarDecl(decl), cexps[0],cexps[1], cexps[2] )));
