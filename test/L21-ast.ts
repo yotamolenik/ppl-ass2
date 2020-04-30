@@ -38,7 +38,7 @@ import { Result, makeOk, makeFailure, bind, mapResult, safe2, safe3 } from "../i
 // A toplevel expression in L2 - can appear in a program
 export type Exp = DefineExp | CExp;
 export type AtomicExp = NumExp | BoolExp | PrimOp | VarRef;
-export type CompoundExp = AppExp | IfExp | ProcExp;
+export type CompoundExp = AppExp | IfExp | ProcExp | ForExp;
 export type CExp =  AtomicExp | CompoundExp;
 
 export interface Program {tag: "Program"; exps: Exp[]; }
@@ -53,6 +53,8 @@ export interface AppExp {tag: "AppExp", rator: CExp, rands: CExp[]; }
 // L2
 export interface IfExp {tag: "IfExp"; test: CExp; then: CExp; alt: CExp; };
 export interface ProcExp {tag: "ProcExp"; args: VarDecl[], body: CExp[]; };
+// L21
+export interface ForExp {tag: "ForExp"; loopVariable: VarDecl, start:NumExp, end:NumExp, body: CExp; };
 
 // Type value constructors for disjoint types
 export const makeProgram = (exps: Exp[]): Program => ({tag: "Program", exps: exps});
@@ -70,6 +72,9 @@ export const makeIfExp = (test: CExp, then: CExp, alt: CExp): IfExp =>
     ({tag: "IfExp", test: test, then: then, alt: alt});
 export const makeProcExp = (args: VarDecl[], body: CExp[]): ProcExp =>
     ({tag: "ProcExp", args: args, body: body});
+// L21
+export const makeForExp = (loopVariable: VarDecl, start:NumExp, end:NumExp, body: CExp): ForExp =>
+    ({tag: "ForExp", loopVariable: loopVariable, start: start, end: end, body: body});
 
 // Type predicates for disjoint types
 export const isProgram = (x: any): x is Program => x.tag === "Program";
@@ -83,6 +88,8 @@ export const isAppExp = (x: any): x is AppExp => x.tag === "AppExp";
 // L2
 export const isIfExp = (x: any): x is IfExp => x.tag === "IfExp";
 export const isProcExp = (x: any): x is ProcExp => x.tag === "ProcExp";
+//L21
+export const isForExp = (x: any): x is ForExp => x.tag === "ForExp";
 
 // Type predicates for type unions
 export const isExp = (x: any): x is Exp => isDefineExp(x) || isCExp(x);
@@ -90,7 +97,7 @@ export const isAtomicExp = (x: any): x is AtomicExp =>
     isNumExp(x) || isBoolExp(x) ||
     isPrimOp(x) || isVarRef(x);
 export const isCompoundExp = (x: any): x is CompoundExp =>
-    isAppExp(x) || isIfExp(x) || isProcExp(x);
+    isAppExp(x) || isIfExp(x) || isProcExp(x) || isForExp(x);
 export const isCExp = (x: any): x is CExp =>
     isAtomicExp(x) || isCompoundExp(x);
 
@@ -140,10 +147,11 @@ export const parseL21CompoundExp = (op: Sexp, params: Sexp[]): Result<Exp> =>
     op === "define"? parseDefine(params) :
     parseL21CompoundCExp(op, params);
 
-// <CompoundCExp> -> <AppExp> | <IfExp> | <ProcExp>
+// <CompoundCExp> -> <AppExp> | <IfExp> | <ProcExp> | <ForExp>
 export const parseL21CompoundCExp = (op: Sexp, params: Sexp[]): Result<CExp> =>
     op === "if" ? parseIfExp(params) :
     op === "lambda" ? parseProcExp(first(params), rest(params)) :
+    op === "for" ? parseForExp(first(params), rest(params)) :
     parseAppExp(op, params);
 
 // <DefineExp> -> (define <VarDecl> <CExp>)
@@ -195,3 +203,18 @@ const parseProcExp = (vars: Sexp, body: Sexp[]): Result<ProcExp> =>
         bind(mapResult(parseL21CExp, body),
              (cexps: CExp[]) => makeOk(makeProcExp(map(makeVarDecl, vars), cexps))) :
     makeFailure("Invalid vars for ProcExp");
+
+
+// const parseForExp = (first: Sexp, rest: Sexp[]): Result<ForExp> =>
+//     isEmpty(first) || rest.length !== 3 ? makeFailure("Expression not of the form (for <var> <num> <num> <cexp>)") :
+//     !isIdentifier(first) ? makeFailure("First arg of for should be variable") :
+//     bind(mapResult(parseL21CExp, rest),
+//          (cexps: CExp[]) => !isNumExp(cexps[0]) || !isNumExp(cexps[1]) ? makeFailure("Second and third args of for should be num") :
+//                             makeOk(makeForExp(makeVarDecl(first), cexps[0], cexps[1], cexps[2]))); 
+
+const parseForExp = (decl: Sexp, body:Sexp[]): Result<ForExp> =>
+    body.length !== 3 ? makeFailure("Expression not of the form (for <VarDecl> <NumExp> <NumExp> <cexp>)") :
+    bind(mapResult(parseL21CExp, body), 
+        (cexps: CExp[]) =>  makeOk(makeForExp(makeVarDecl,decl), cexps[0],cexps[1],cexps[2] )));
+
+        //num1: NumExp, num2: NumExp, cexp: CExp 
