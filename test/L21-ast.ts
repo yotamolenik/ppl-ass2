@@ -217,3 +217,4 @@ const parseForExp = (decl: Sexp, body:Sexp[]): Result<ForExp> =>
     bind(mapResult(parseL21CExp, body), 
         (cexps: CExp[]) => !isNumExp(cexps[0]) || !isNumExp(cexps[1]) ? makeFailure("Args 1 and 2 shoud be numbers") :
         makeOk(makeForExp(makeVarDecl(decl), cexps[0],cexps[1], cexps[2] )));
+//hi
