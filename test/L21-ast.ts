@@ -204,17 +204,9 @@ const parseProcExp = (vars: Sexp, body: Sexp[]): Result<ProcExp> =>
              (cexps: CExp[]) => makeOk(makeProcExp(map(makeVarDecl, vars), cexps))) :
     makeFailure("Invalid vars for ProcExp");
 
-
-// const parseForExp = (first: Sexp, rest: Sexp[]): Result<ForExp> =>
-//     isEmpty(first) || rest.length !== 3 ? makeFailure("Expression not of the form (for <var> <num> <num> <cexp>)") :
-//     !isIdentifier(first) ? makeFailure("First arg of for should be variable") :
-//     bind(mapResult(parseL21CExp, rest),
-//          (cexps: CExp[]) => !isNumExp(cexps[0]) || !isNumExp(cexps[1]) ? makeFailure("Second and third args of for should be num") :
-//                             makeOk(makeForExp(makeVarDecl(first), cexps[0], cexps[1], cexps[2]))); 
-
+// <ForExp> -> (for <varDecl> <NumExp> <NumExp> <CExp>)
 const parseForExp = (decl: Sexp, body:Sexp[]): Result<ForExp> =>
     body.length !== 3 || !isIdentifier (decl) ? makeFailure("Expression not of the form (for <VarDecl> <NumExp> <NumExp> <cexp>)") :
     bind(mapResult(parseL21CExp, body), 
         (cexps: CExp[]) => !isNumExp(cexps[0]) || !isNumExp(cexps[1]) ? makeFailure("Args 1 and 2 shoud be numbers") :
         makeOk(makeForExp(makeVarDecl(decl), cexps[0],cexps[1], cexps[2] )));
-//hi
