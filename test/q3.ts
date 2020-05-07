@@ -1,7 +1,9 @@
-import { ForExp, AppExp, Exp, Program, makeAppExp, makeProcExp, makeNumExp, isForExp } from "./L21-ast";
+import { isProgram, makeProgram, isExp, isCExp, isDefineExp,
+         makeDefineExp, isAtomicExp, isIfExp, makeIfExp, isAppExp,
+         isProcExp ,ForExp, AppExp, Exp, CExp, Program, makeAppExp,
+         makeProcExp, makeNumExp, isForExp } from "./L21-ast";
 import { Result, makeOk, makeFailure } from "../imp/result";
 import { map, range } from "ramda";
-import { isProgram, makeProgram, isExp } from "../imp/L2-ast";
 
 /*
 Purpose: convert a ForExp in L21 to an AppExp in L2
@@ -24,23 +26,27 @@ Purpose: convert an L21 program to an L2 program
 Signature: L21ToL2(Exp | Program)
 Type: [Exp | Program -> Result<Exp | Program>]
 */
-export const L21ToL2 = (exp: Exp | Program): Result<Exp | Program> =>{
-    if (isProgram(exp)){
-        const L2Arr = exp.exps.map((x) => 
-        {
-            if(isForExp(x))
-                return for2app(x);
-            return x;
-        })
-        if (L2Arr.filter((x) => !isExp(x)) != [] )
-            return makeOk(makeProgram(L2Arr));
-            else
-            return makeFailure("L2Arr");
-    }
-    else{
-        if(isForExp(exp)){
-            return makeOk(for2app(exp));
-        }
-        return makeOk(exp)
-    }
-}
+
+
+export const L21ToL2 = (exp: Exp | Program): Result<Exp | Program> =>
+    isExp(exp) ? makeOk(L21ToL2Exp(exp)) :
+    isProgram(exp) ? makeOk(makeProgram(map(L21ToL2Exp, exp.exps))) :
+    makeOk(exp);
+
+
+const L21ToL2Exp = (exp: Exp): Exp =>
+    isCExp(exp) ? L21ToL2CExp(exp) :
+    isDefineExp(exp) ? makeDefineExp(exp.var, L21ToL2CExp(exp.val)) :
+    exp;
+    
+const L21ToL2CExp = (exp: CExp): CExp =>
+    isAtomicExp(exp) ? exp :
+    isIfExp(exp) ? makeIfExp(L21ToL2CExp(exp.test),
+                             L21ToL2CExp(exp.then),
+                             L21ToL2CExp(exp.alt)) :
+    isAppExp(exp) ? makeAppExp(L21ToL2CExp(exp.rator),
+                            map(L21ToL2CExp, exp.rands)) :
+    isProcExp(exp) ? makeProcExp(exp.args, map(L21ToL2CExp, exp.body)) :
+    isForExp(exp) ? L21ToL2CExp(for2app(exp)) :                             // for2app(exp) returns an AppExp. but if we have for inside for, after for2app(exp we have AppExp(for,operands))
+    exp;
+
