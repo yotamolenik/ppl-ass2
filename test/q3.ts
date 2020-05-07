@@ -13,7 +13,7 @@ Type: [ForExp -> AppExp]
 
 // 
 export const for2app = (exp: ForExp): AppExp =>{
-    const arr = range(exp.start.val,exp.end.val);
+    const arr = range(exp.start.val,exp.end.val+1);
     const appExpArr = arr.map((i)=>
                     makeAppExp(
                         makeProcExp([exp.loopVariable], [exp.body]),[makeNumExp(i)]));
@@ -33,12 +33,20 @@ export const L21ToL2 = (exp: Exp | Program): Result<Exp | Program> =>
     isProgram(exp) ? makeOk(makeProgram(map(L21ToL2Exp, exp.exps))) :
     makeOk(exp);
 
-
+/*
+Purpose: convert an L21 Exp to an L2 Exp
+Signature: L21ToL2Exp(Exp)
+Type: [Exp -> Exp]
+*/
 const L21ToL2Exp = (exp: Exp): Exp =>
     isCExp(exp) ? L21ToL2CExp(exp) :
     isDefineExp(exp) ? makeDefineExp(exp.var, L21ToL2CExp(exp.val)) :
     exp;
-    
+/*
+Purpose: convert an L21 CExp to an L2 CExp (Without ForExp)
+Signature: L21ToL2CExp(CExp)
+Type: [CExp -> CExp]
+*/    
 const L21ToL2CExp = (exp: CExp): CExp =>
     isAtomicExp(exp) ? exp :
     isIfExp(exp) ? makeIfExp(L21ToL2CExp(exp.test),
