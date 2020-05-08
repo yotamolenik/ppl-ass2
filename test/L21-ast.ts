@@ -54,7 +54,7 @@ export interface AppExp {tag: "AppExp", rator: CExp, rands: CExp[]; }
 export interface IfExp {tag: "IfExp"; test: CExp; then: CExp; alt: CExp; };
 export interface ProcExp {tag: "ProcExp"; args: VarDecl[], body: CExp[]; };
 // L21
-export interface ForExp {tag: "ForExp"; loopVariable: VarDecl, start:NumExp, end:NumExp, body: CExp; };
+export interface ForExp {tag: "ForExp"; var: VarDecl, start:NumExp, end:NumExp, body: CExp; };
 
 // Type value constructors for disjoint types
 export const makeProgram = (exps: Exp[]): Program => ({tag: "Program", exps: exps});
@@ -74,7 +74,7 @@ export const makeProcExp = (args: VarDecl[], body: CExp[]): ProcExp =>
     ({tag: "ProcExp", args: args, body: body});
 // L21
 export const makeForExp = (loopVariable: VarDecl, start:NumExp, end:NumExp, body: CExp): ForExp =>
-    ({tag: "ForExp", loopVariable: loopVariable, start: start, end: end, body: body});
+    ({tag: "ForExp", var: loopVariable, start: start, end: end, body: body});
 
 // Type predicates for disjoint types
 export const isProgram = (x: any): x is Program => x.tag === "Program";

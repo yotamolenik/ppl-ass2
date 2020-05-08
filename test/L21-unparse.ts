@@ -10,7 +10,7 @@ export const unparseL21 = (exp: Exp | Program): Result<string> =>
     isPrimOp(exp) ? makeOk(exp.op) :
     isDefineExp(exp) ? bind(unparseL21(exp.val), (val: string) => makeOk(`(define ${exp.var.var} ${val})`)) :
     isProcExp(exp) ? bind(mapResult(unparseL21, exp.body), (body: string[]) => makeOk(`(lambda (${map(v => v.var, exp.args).join(" ")}) ${body.join(" ")})`)) :
-    isForExp(exp) ? safe3((start: string, end: string, body: string) => makeOk(`(for ${exp.loopVariable.var} ${start} ${end} ${body})`))
+    isForExp(exp) ? safe3((start: string, end: string, body: string) => makeOk(`(for ${exp.var.var} ${start} ${end} ${body})`))
                     (unparseL21(exp.start), unparseL21(exp.end), unparseL21(exp.body)) :
     isIfExp(exp) ? safe3((test: string, then: string, alt: string) => makeOk(`(if ${test} ${then} ${alt})`))
                     (unparseL21(exp.test), unparseL21(exp.then), unparseL21(exp.alt)) :

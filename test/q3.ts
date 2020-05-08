@@ -16,7 +16,7 @@ export const for2app = (exp: ForExp): AppExp =>{
     const arr = range(exp.start.val,exp.end.val+1);
     const appExpArr = arr.map((i)=>
                     makeAppExp(
-                        makeProcExp([exp.loopVariable], [exp.body]),[makeNumExp(i)]));
+                        makeProcExp([exp.var], [exp.body]),[makeNumExp(i)]));
     return makeAppExp(makeProcExp([], appExpArr),[]);
 }
 
