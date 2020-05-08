@@ -31,7 +31,8 @@ Type: [Exp | Program -> Result<Exp | Program>]
 export const L21ToL2 = (exp: Exp | Program): Result<Exp | Program> =>
     isExp(exp) ? makeOk(L21ToL2Exp(exp)) :
     isProgram(exp) ? makeOk(makeProgram(map(L21ToL2Exp, exp.exps))) :
-    makeOk(exp);
+    /*makeOk(exp);*/
+    makeFailure('unkown exp - ' + exp)
 
 /*
 Purpose: convert an L21 Exp to an L2 Exp
@@ -54,7 +55,6 @@ const L21ToL2CExp = (exp: CExp): CExp =>
                              L21ToL2CExp(exp.alt)) :
     isAppExp(exp) ? makeAppExp(L21ToL2CExp(exp.rator),
                             map(L21ToL2CExp, exp.rands)) :
-    isProcExp(exp) ? makeProcExp(exp.args, map(L21ToL2CExp, exp.body)) :
+    isProcExp(exp) ? makeProcExp(exp.args, map(L21ToL2CExp, exp.body)) :                     
     isForExp(exp) ? L21ToL2CExp(for2app(exp)) :                             // for2app(exp) returns an AppExp. but if we have for inside for, after for2app(exp we have AppExp(for,operands))
     exp;
-
