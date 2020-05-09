@@ -165,4 +165,10 @@ describe('Q4 Tests', () => {
         expect(bind(parseL2(`(L2 ((lambda (x) (number? x y)) x))`), l2ToJS)).to.deep.equal(makeOk(`console.log(((x) => (typeof x === "number"))(x));`));
 
     });
+
+    it('Ori try', () => {
+        expect(bind(parseL2(`(L2 (not b))`), l2ToJS)).to.deep.equal(makeOk(`(!b)`));
+        expect(bind(parseL2(`(L2 (if (not b) (f 3) (g 4)))`), l2ToJS)).to.deep.equal(makeOk(`(!b) ? f(3) : g(4));`));
+
+    });
 });
