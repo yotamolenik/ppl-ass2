@@ -49,6 +49,9 @@ export const l2ToJS = (exp: Exp | Program): Result<string> =>
     isProcExp(exp) ? bind(mapResult(l2ToJS, exp.body), (body: string[]) => makeOk(`((${map(v => v.var, exp.args).join(",")}) => ${bigBody(body)})`)) :
     isIfExp(exp) ? safe3((test: string, then: string, alt: string) => makeOk(`(${test} ? ${then} : ${alt})`))
                     (l2ToJS(exp.test), l2ToJS(exp.then), l2ToJS(exp.alt)) :
-    isAppExp(exp) ? safe2((rator: string, rands: string[]) => !isPrimOp(exp.rator)? makeOk(`${rator}(${rands.join(",")})`) : makeOk(`(${rands.join(" " + rator + " ")})`))
+    isAppExp(exp) ? safe2((rator: string, rands: string[]) => 
+                        !isPrimOp(exp.rator)? makeOk(`${rator}(${rands.join(",")})`) :
+                         rator==="!"? makeOk('(!'+rands+')'):
+                        makeOk(`(${rands.join(" " + rator + " ")})`))
                         (l2ToJS(exp.rator), mapResult(l2ToJS, exp.rands)) :
     makeFailure(`Unknown expression: ${exp}`);
