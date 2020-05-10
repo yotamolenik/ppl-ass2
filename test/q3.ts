@@ -56,5 +56,5 @@ const L21ToL2CExp = (exp: CExp): CExp =>
     isAppExp(exp) ? makeAppExp(L21ToL2CExp(exp.rator),
                             map(L21ToL2CExp, exp.rands)) :
     isProcExp(exp) ? makeProcExp(exp.args, map(L21ToL2CExp, exp.body)) :                     
-    isForExp(exp) ? L21ToL2CExp(for2app(exp)) :                             // for2app(exp) returns an AppExp. but if we have for inside for, after for2app(exp we have AppExp(for,operands))
+    isForExp(exp) ? L21ToL2CExp(for2app(exp)) :  
     exp;

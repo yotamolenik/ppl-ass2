@@ -168,7 +168,7 @@ describe('Q4 Tests', () => {
 
     it('Ori try', () => {
         expect(bind(parseL2(`(L2 (not b))`), l2ToJS)).to.deep.equal(makeOk(`(!b)`));
-        expect(bind(parseL2(`(L2 (if (not b) (f 3) (g 4)))`), l2ToJS)).to.deep.equal(makeOk(`(!b) ? f(3) : g(4));`));
+        expect(bind(parseL2(`(L2 (if (not b) (f 3) (g 4)))`), l2ToJS)).to.deep.equal(makeOk(`((!b) ? f(3) : g(4))`));
 
     });
 });
